@@ -1,0 +1,821 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>ADHD Budget Planner — Calm Money Command Center</title>
+<style>
+:root{--bg:#f4f5f1;--panel:#ffffff;--panel2:#eef1eb;--ink:#18352e;--muted:#78847e;--line:#dfe5dc;--accent:#2e6b58;--accent2:#b6cdb5;--gold:#c9a66b;--danger:#bd625f;--warn:#c98a3d;--shadow:0 12px 35px #17352e0d;--radius:22px}
+[data-theme="dark"]{--bg:#0c1122;--panel:#151c35;--panel2:#1e2846;--ink:#eef0ff;--muted:#9aa3c9;--line:#2a3560;--accent:#5ee6c4;--accent2:#3a4fa3;--gold:#ffd27a;--danger:#ff8fa3;--warn:#ffb86b;--shadow:0 14px 40px #00000070;color-scheme:dark}
+[data-theme="dark"] body{background:radial-gradient(1200px 600px at 10% -10%,#3b2a7a55,transparent 70%),var(--bg)}
+[data-theme="dark"] .logo,[data-theme="dark"] .btn.primary,[data-theme="dark"] .nav .badge{color:#0b1020}
+[data-theme="dark"] .pill.ok{color:#0b1020}
+[data-theme="dark"] .hero-ask{background:linear-gradient(135deg,#6d5cf6,#2f9fd8)}
+[data-theme="dark"] .hero-ask .eyebrow{color:#e4e0ff}
+[data-theme="dark"] .card{background:linear-gradient(180deg,var(--panel),color-mix(in srgb,var(--panel) 85%,#000))}
+[data-theme="galapagos"]{--bg:#2E3033;--panel:#25272A;--panel2:#3D3F43;--ink:#F3F1EC;--muted:#B9BCB4;--line:#61635E;--accent:#1EA3A1;--accent2:#61635E;--gold:#CC5433;--danger:#CC5433;--warn:#CC5433;--shadow:0 14px 40px #00000066;color-scheme:dark}
+[data-theme="galapagos"] .logo,[data-theme="galapagos"] .btn.primary,[data-theme="galapagos"] .nav .badge,[data-theme="galapagos"] .pill.ok{color:#11201f}
+[data-theme="galapagos"] .hero-ask{background:linear-gradient(135deg,#1EA3A1,#61635E)}
+[data-theme="galapagos"] .pill.warn{background:#4a2419;color:#f3b6a2}
+[data-theme="galapagos"] .pill.bad{background:#4a2419;color:#f3b6a2}
+[data-theme="riviera"]{--bg:#F3ECDE;--panel:#FBF8F1;--panel2:#E9DCC4;--ink:#183451;--muted:#7A6A55;--line:#D4AF83;--accent:#183451;--accent2:#D4AF83;--gold:#A9501C;--danger:#A9501C;--warn:#A9501C;--shadow:0 12px 32px #18345114}
+[data-theme="riviera"] .hero-ask{background:linear-gradient(135deg,#183451,#A9501C)}
+[data-theme="riviera"] .hero-ask .eyebrow{color:#F3ECDE}
+[data-theme="riviera"] .pill.ok{background:#D4AF83;color:#183451}
+[data-theme="riviera"] .pill.warn{background:#F0D9C2;color:#7a3614}
+[data-theme="riviera"] .pill.bad{background:#EFD0C0;color:#7a3614}
+[data-theme="lavender"]{--bg:#f6f3fa;--panel:#ffffff;--panel2:#eee8f7;--ink:#352744;--muted:#887e91;--line:#e5dff0;--accent:#8062a8;--accent2:#d9c8ec;--gold:#c59b5b;--danger:#b8636b;--warn:#c59b5b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;transition:background .3s}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+.app{display:flex;min-height:100vh}
+.sidebar{width:262px;background:var(--panel);border-right:1px solid var(--line);padding:24px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;z-index:3;overflow-y:auto}
+.brand{display:flex;align-items:center;gap:12px;padding:0 10px 24px}
+.logo{width:44px;height:44px;border-radius:15px;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:900;font-size:17px;letter-spacing:.5px}
+.brand b{font:800 21px Georgia,serif;letter-spacing:-.4px;display:block}
+.brand small{color:var(--muted);font-size:12px}
+.nav{display:grid;gap:4px}
+.nav button{color:var(--muted);padding:11px 13px;border-radius:14px;text-align:left;display:flex;align-items:center;gap:12px;transition:.2s}
+.nav button:hover,.nav button.active{background:var(--panel2);color:var(--ink)}
+.nav button.active{box-shadow:inset 3px 0 0 var(--accent)}
+.nav .ico{width:24px;text-align:center;font-size:16px}
+.nav .badge{margin-left:auto;background:var(--accent);color:#fff;border-radius:20px;padding:1px 8px;font-size:11px}
+.side-bottom{margin-top:auto;background:var(--panel2);border-radius:17px;padding:15px;color:var(--muted);line-height:1.55;font-size:12.5px}
+.main{flex:1;min-width:0;padding:28px 34px 60px}
+.topbar{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap}
+.eyebrow{color:var(--accent);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase}
+.title{font:800 clamp(28px,3vw,42px)/1.05 Georgia,serif;margin:8px 0 6px;letter-spacing:-.5px}
+.subtitle{color:var(--muted)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{padding:10px 15px;border-radius:13px;background:var(--panel);border:1px solid var(--line);color:var(--ink);transition:.2s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.ghost{background:transparent;border-color:transparent}
+.btn.danger{color:var(--danger)}
+.btn.sm{padding:6px 10px;font-size:12px;border-radius:10px}
+.grid{display:grid;gap:18px}
+.metrics{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:18px}
+.dash{grid-template-columns:1.4fr 1fr 1fr}
+.two{grid-template-columns:1fr 1fr}
+.span2{grid-column:span 2}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);min-width:0}
+.card-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.card h3{margin:0;font-size:16px}
+.card h4{margin:0 0 8px}
+.metric-label{color:var(--muted);font-size:12px}
+.metric-value{font-size:30px;font-weight:850;margin:8px 0 4px;letter-spacing:-1px}
+.trend{font-size:12px;color:var(--accent)}
+.trend.bad{color:var(--danger)}
+.muted{color:var(--muted)}
+.small{font-size:12px}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:30px;background:var(--panel2);font-size:11px;color:var(--muted);white-space:nowrap}
+.pill.ok{background:var(--accent2);color:var(--ink)}
+.pill.warn{background:#f6e7cf;color:#7a5418}
+.pill.bad{background:#f4dedc;color:#7d2f2b}
+[data-theme="dark"] .pill.warn{background:#3a2d17;color:#e9c98f}
+[data-theme="dark"] .pill.bad{background:#3d2220;color:#f0b0ac}
+.progress{height:9px;background:var(--panel2);border-radius:20px;overflow:hidden}
+.progress>i{display:block;height:100%;background:var(--accent);border-radius:20px;transition:width .5s}
+.progress>i.warn{background:var(--warn)}
+.progress>i.bad{background:var(--danger)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.stack{display:grid;gap:12px}
+.list-item{padding:12px 0;border-bottom:1px solid var(--line)}
+.list-item:last-child{border-bottom:0}
+.check{width:19px;height:19px;accent-color:var(--accent);cursor:pointer}
+.field{width:100%;padding:11px 13px;background:var(--panel2);border:1px solid transparent;border-radius:12px;color:var(--ink);outline:none;transition:.2s}
+.field:focus{border-color:var(--accent);background:var(--panel)}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.form-grid .full{grid-column:1/-1}
+label.lbl{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}
+.section{display:none}
+.section.active{display:block;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.toolbar h2{font:800 30px Georgia,serif;margin:0;letter-spacing:-.4px}
+.modal{position:fixed;inset:0;background:#0b17118f;backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:20px;z-index:10}
+.modal.show{display:flex}
+.modal-box{background:var(--panel);width:min(580px,100%);max-height:90vh;overflow:auto;border-radius:25px;padding:26px;border:1px solid var(--line);box-shadow:var(--shadow);position:relative}
+.modal-box h2{font:800 26px Georgia,serif;margin:0 0 16px}
+.close{position:absolute;right:16px;top:16px;background:var(--panel2);border-radius:50%;width:32px;height:32px}
+.ring{width:118px;height:118px;border-radius:50%;display:grid;place-items:center;position:relative;flex-shrink:0}
+.ring:after{content:"";position:absolute;inset:11px;background:var(--panel);border-radius:50%}
+.ring b{position:relative;z-index:1;font-size:24px}
+.donut{width:150px;height:150px;border-radius:50%;position:relative;flex-shrink:0}
+.donut:after{content:"";position:absolute;inset:26px;background:var(--panel);border-radius:50%}
+.legend{display:grid;gap:8px;flex:1;min-width:150px}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:7px}
+.bars{display:flex;align-items:flex-end;gap:12px;height:190px;padding-top:12px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;height:100%;justify-content:flex-end}
+.bar{width:100%;max-width:38px;background:linear-gradient(180deg,var(--accent),var(--accent2));border-radius:9px 9px 3px 3px;min-height:4px;transition:height .6s}
+.bar-col small{color:var(--muted);font-size:11px}
+.theme-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
+.theme-opt{display:grid;gap:7px;text-align:left;padding:10px;border:1px solid var(--line);border-radius:16px;background:var(--panel2);transition:.2s}
+.theme-opt:hover{border-color:var(--accent)}
+.theme-opt.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.theme-opt .swatch{display:grid;grid-template-columns:1fr 1fr;gap:4px;height:62px}
+.theme-opt .swatch i{display:block;border-radius:9px}
+.theme-opt b{font-size:13px}
+.theme-opt small{color:var(--muted);font-size:11px;line-height:1.3}
+.table{width:100%;border-collapse:collapse}
+.table th,.table td{text-align:left;padding:12px 8px;border-bottom:1px solid var(--line);font-size:13px}
+.table th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:1px}
+.table .num{text-align:right;font-variant-numeric:tabular-nums}
+.empty{padding:34px;text-align:center;color:var(--muted)}
+.hero-ask{background:linear-gradient(135deg,var(--accent),#3f8a72);color:#fff;border-radius:var(--radius);padding:22px;box-shadow:var(--shadow)}
+.hero-ask .eyebrow{color:#dff3e8}
+.hero-ask h2{font:800 26px Georgia,serif;margin:8px 0 6px}
+.hero-ask p{margin:0;opacity:.9}
+.hero-ask .btn{background:#ffffffee;color:var(--ink);border-color:transparent}
+.timeline{position:relative;padding-left:18px}
+.timeline:before{content:"";position:absolute;left:5px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.tl{position:relative;padding:8px 0}
+.tl:before{content:"";position:absolute;left:-18px;top:14px;width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.tl.late:before{background:var(--danger)}
+.tl.paid:before{background:var(--muted);opacity:.5}
+.heat{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.heat i{aspect-ratio:1;border-radius:6px;background:var(--panel2)}
+.toast{position:fixed;right:25px;bottom:25px;background:var(--ink);color:var(--bg);padding:13px 18px;border-radius:13px;display:none;z-index:20;box-shadow:var(--shadow)}
+.toast.show{display:block;animation:fade .3s}
+.mobile-menu{display:none}
+.timer-big{font:800 64px Georgia,serif;letter-spacing:-2px;margin:10px 0}
+.kv{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--line);font-size:13px}
+.kv:last-child{border-bottom:0}
+@media(max-width:1180px){.sidebar{width:228px}.main{padding:24px}.metrics{grid-template-columns:repeat(2,1fr)}.dash{grid-template-columns:1fr 1fr}.dash .span2{grid-column:span 2}}
+@media(max-width:780px){
+  .sidebar{position:fixed;left:-280px;transition:.25s;box-shadow:var(--shadow)}
+  .sidebar.open{left:0}
+  .main{padding:18px}
+  .mobile-menu{display:inline-block;margin-bottom:6px}
+  .metrics,.dash,.two{grid-template-columns:1fr}
+  .dash .span2{grid-column:auto}
+  .form-grid{grid-template-columns:1fr}
+  .title{font-size:30px}
+  .toolbar h2{font-size:26px}
+}
+@media print{.sidebar,.topbar .actions,.btn,.toolbar .actions,.close{display:none!important}.main{padding:0}.card{box-shadow:none;break-inside:avoid}body{background:#fff;color:#000}}
+</style>
+</head>
+<body data-theme="light">
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><div class="logo">BP</div><div><b>Budget Planner</b><small>Calm money, clear mind</small></div></div>
+    <nav class="nav" id="nav"></nav>
+    <div class="side-bottom">✦ <b>One step at a time.</b><br/>Your job today is just the next action on the dashboard.</div>
+  </aside>
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <button class="btn mobile-menu" onclick="$('#sidebar').classList.toggle('open')">☰</button>
+        <div class="eyebrow" id="eyebrow">YOUR MONEY COMMAND CENTER</div>
+        <div class="title" id="pageTitle">Good morning.</div>
+        <div class="subtitle" id="pageSub"></div>
+      </div>
+      <div class="actions">
+        <button class="btn" onclick="openQuick()">＋ Quick add</button>
+        <button class="btn" onclick="cycleTheme()">◐ Theme</button>
+      </div>
+    </div>
+    <section class="section active" id="dashboard"></section>
+    <section class="section" id="budget"></section>
+    <section class="section" id="transactions"></section>
+    <section class="section" id="bills"></section>
+    <section class="section" id="debt"></section>
+    <section class="section" id="impulse"></section>
+    <section class="section" id="subs"></section>
+    <section class="section" id="reset"></section>
+    <section class="section" id="reports"></section>
+    <section class="section" id="settings"></section>
+  </main>
+</div>
+<div class="modal" id="modal"><div class="modal-box" id="modalBox"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ helpers ============ */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const KEY='adhd_budget_planner_v2';
+const now=new Date();
+const iso=d=>{const x=new Date(d);return new Date(x.getTime()-x.getTimezoneOffset()*60000).toISOString().slice(0,10)};
+const monthOf=d=>iso(d).slice(0,7);
+const todayISO=()=>iso(new Date());
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const PALETTE=['#2e6b58','#c9a66b','#8062a8','#5d8fb0','#bd625f','#7fa36b','#b08d57','#6f7fa8'];
+const ENV_ICON={Housing:'🏠',Food:'🍽️',Transport:'🚗',Fun:'🎉',Health:'🩺',Shopping:'🛍️',Other:'📌'};
+const envName=n=>`${ENV_ICON[n]||'🏷️'} ${esc(n)}`;
+
+/* ============ state ============ */
+const DEFAULT_ENVELOPES=[
+ {id:'e1',name:'Housing',limit:1200,color:PALETTE[0]},
+ {id:'e2',name:'Food',limit:450,color:PALETTE[1]},
+ {id:'e3',name:'Transport',limit:150,color:PALETTE[3]},
+ {id:'e4',name:'Fun',limit:120,color:PALETTE[2]},
+ {id:'e5',name:'Health',limit:100,color:PALETTE[5]},
+ {id:'e6',name:'Shopping',limit:150,color:PALETTE[4]},
+ {id:'e7',name:'Other',limit:100,color:PALETTE[6]}
+];
+function blank(){return{
+ settings:{name:'',currency:'$',theme:'light',payday:1,startedOn:todayISO()},
+ envelopes:JSON.parse(JSON.stringify(DEFAULT_ENVELOPES)),
+ income:[],expenses:[],
+ bills:[],billPaid:{},
+ goals:[],debts:[],
+ impulse:[],
+ subs:[],
+ reviews:[],
+ brain:[],
+ weekly:{done:{}},
+ page:'dashboard'
+}}
+let S=load();
+function load(){try{const r=localStorage.getItem(KEY);return r?Object.assign(blank(),JSON.parse(r)):blank()}catch(e){return blank()}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const money=n=>{const v=Number(n||0);const s=Math.abs(v).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:2});return (v<0?'−':'')+S.settings.currency+s};
+const pct=n=>Math.max(0,Math.min(100,Math.round(n||0)));
+const fmtDate=d=>new Date(d+'T00:00').toLocaleDateString(undefined,{month:'short',day:'numeric'});
+function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('show');clearTimeout(window._t);window._t=setTimeout(()=>el.classList.remove('show'),2200)}
+const THEMES=[
+ {k:'light',n:'Sage',sub:'bright, airy and pastel',c:['#f4f5f1','#2e6b58','#b6cdb5','#c9a66b']},
+ {k:'dark',n:'Midnight',sub:'deep navy and luminous',c:['#0c1122','#151c35','#5ee6c4','#3a4fa3']},
+ {k:'lavender',n:'Lavender',sub:'calm and soft',c:['#f6f3fa','#8062a8','#d9c8ec','#c59b5b']},
+ {k:'galapagos',n:'Galapagos',sub:'lava black, booby blue, crab orange, iguana grey',c:['#2E3033','#1EA3A1','#CC5433','#61635E']},
+ {k:'riviera',n:'Riviera',sub:'riviera blue, terracotta, soft ivory, sand linen',c:['#183451','#A9501C','#F3ECDE','#D4AF83']}];
+function themeOpts(){return THEMES.map(t=>`<button type="button" class="theme-opt ${S.settings.theme===t.k?'on':''}" onclick="pickTheme('${t.k}')"><span class="swatch">${t.c.map(x=>`<i style="background:${x}"></i>`).join('')}</span><b>${t.n}</b><small>${t.sub}</small></button>`).join('')}
+function pickTheme(k){S.settings.theme=k;save();render();renderSettings();toast('Theme: '+themeLabel())}
+function themeLabel(){return {light:'Sage',dark:'Midnight',lavender:'Lavender',galapagos:'Galapagos',riviera:'Riviera'}[S.settings.theme]||'Sage'}
+
+/* ============ navigation ============ */
+const NAV=[
+ ['dashboard','⌂','Dashboard','Your one-glance money view'],
+ ['budget','◎','Budget envelopes','Give every dollar a job'],
+ ['transactions','⇄','Transactions','Income and spending log'],
+ ['bills','▦','Bills & due dates','Never be surprised again'],
+ ['debt','◇','Debt & savings','Snowball and goals'],
+ ['impulse','✋','Impulse pause','Wait 48 hours before you buy'],
+ ['subs','↻','Subscriptions','Audit what quietly renews'],
+ ['reset','✓','Weekly reset','Five calm minutes a week'],
+ ['reports','▥','Insights','Patterns you can see'],
+ ['settings','⚙','Settings','Make it yours']
+];
+function renderNav(){
+ $('#nav').innerHTML=NAV.map(([id,i,t])=>`<button data-page="${id}" class="${S.page===id?'active':''}" onclick="go('${id}')"><span class="ico">${i}</span>${t}${id==='bills'&&unpaidBillsCount()>0?`<span class="badge">${unpaidBillsCount()}</span>`:''}</button>`).join('');
+}
+function go(page){S.page=page;save();$$('.section').forEach(x=>x.classList.toggle('active',x.id===page));renderNav();render();$('#sidebar').classList.remove('open');window.scrollTo({top:0,behavior:'smooth'})}
+
+/* ============ derived data ============ */
+const curMonth=()=>monthOf(new Date());
+const inMonth=(arr,m=curMonth())=>arr.filter(x=>(x.date||'').startsWith(m));
+const sum=(arr,f=x=>x.amount)=>arr.reduce((a,x)=>a+Number(f(x)||0),0);
+function monthIncome(m=curMonth()){return sum(inMonth(S.income,m))}
+function monthSpent(m=curMonth()){return sum(inMonth(S.expenses,m))}
+function paidMap(m=curMonth()){return S.billPaid[m]||{}}
+function unpaidBills(m=curMonth()){const p=paidMap(m);return S.bills.filter(b=>!p[b.id])}
+function unpaidBillsCount(){return unpaidBills().length}
+function envSpent(name,m=curMonth()){return sum(inMonth(S.expenses,m).filter(x=>x.env===name))}
+function safeToSpend(){
+ const m=curMonth();
+ return monthIncome(m)-monthSpent(m)-sum(unpaidBills(m));
+}
+function dayOfMonth(){return new Date().getDate()}
+function daysInMonth(){return new Date(now.getFullYear(),now.getMonth()+1,0).getDate()}
+function daysUntil(day){const t=new Date();let d=new Date(t.getFullYear(),t.getMonth(),day);if(d<t&&t.getDate()!==day)d=new Date(t.getFullYear(),t.getMonth()+1,day);return Math.round((d-new Date(t.getFullYear(),t.getMonth(),t.getDate()))/86400000)}
+function monthsBack(n){const out=[];for(let i=n-1;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);out.push(monthOf(d))}return out}
+function envColor(name){const e=S.envelopes.find(x=>x.name===name);return e?e.color:PALETTE[6]}
+
+/* ============ render dispatcher ============ */
+function render(){
+ document.body.dataset.theme=S.settings.theme;
+ renderNav();
+ const map={dashboard:renderDashboard,budget:renderBudget,transactions:renderTransactions,bills:renderBills,debt:renderDebt,impulse:renderImpulse,subs:renderSubs,reset:renderReset,reports:renderReports,settings:renderSettings};
+ const nav=NAV.find(x=>x[0]===S.page);
+ if(S.page==='dashboard'){
+   const h=now.getHours();const greet=h<12?'Good morning':h<18?'Good afternoon':'Good evening';
+   $('#pageTitle').textContent=`${greet}${S.settings.name?', '+esc(S.settings.name):''}.`;
+   $('#pageSub').textContent='Here is what needs you today, and nothing else.';
+   $('#eyebrow').textContent='YOUR MONEY COMMAND CENTER';
+ }else{
+   $('#pageTitle').textContent=nav?nav[2]:'Budget Planner';
+   $('#pageSub').textContent=nav?nav[3]:'';
+   $('#eyebrow').textContent='ADHD BUDGET PLANNER';
+ }
+ map[S.page]&&map[S.page]();
+}
+
+/* ============ DEMO DATA (tagged with demo:true so it can be removed safely) ============ */
+const DEMO_KEYS=['income','expenses','bills','goals','debts','impulse','subs','reviews','brain'];
+function hasDemo(){return DEMO_KEYS.some(k=>S[k].some(x=>x.demo))}
+function daysAgo(n){const d=new Date();d.setDate(d.getDate()-n);return iso(d)}
+function dayInMonth(n){return `${curMonth()}-${String(Math.max(1,Math.min(daysInMonth(),n))).padStart(2,'0')}`}
+function loadDemo(){
+ if(hasDemo()){toast('Demo data is already showing');return}
+ const demo=o=>({id:'demo-'+uid(),demo:true,...o});
+ S.income.push(demo({name:'Salary',amount:3200,date:dayInMonth(1),kind:'Regular'}),demo({name:'Freelance design',amount:650,date:daysAgo(4),kind:'Irregular'}));
+ S.expenses.push(
+  demo({name:'Groceries',amount:186.4,date:daysAgo(1),env:'Food'}),
+  demo({name:'Coffee with friend',amount:12.5,date:daysAgo(2),env:'Fun'}),
+  demo({name:'Metro card top-up',amount:40,date:daysAgo(3),env:'Transport'}),
+  demo({name:'Pharmacy',amount:23.9,date:daysAgo(5),env:'Health'}),
+  demo({name:'Online order',amount:64,date:daysAgo(6),env:'Shopping'}),
+  demo({name:'Takeaway dinner',amount:31,date:daysAgo(7),env:'Food'}));
+ const b1=demo({name:'Rent',day:1,amount:1200,env:'Housing',autopay:false});
+ const b2=demo({name:'Phone plan',day:12,amount:35,env:'Other',autopay:true});
+ const b3=demo({name:'Gym membership',day:18,amount:29,env:'Health',autopay:false});
+ S.bills.push(b1,b2,b3);
+ const m=curMonth();S.billPaid[m]=S.billPaid[m]||{};S.billPaid[m][b1.id]=true;
+ S.goals.push(demo({name:'Emergency fund',target:3000,saved:1200}),demo({name:'Trip to Goa',target:1500,saved:400}));
+ S.debts.push(demo({name:'Credit card',balance:2400,min:80}),demo({name:'Student loan',balance:6800,min:150}));
+ S.impulse.push(
+  demo({name:'Noise-cancelling headphones',amount:220,date:daysAgo(3),why:'Better focus while working',decision:'waiting'}),
+  demo({name:'Running shoes',amount:90,date:daysAgo(1),why:'Old pair hurts',decision:'waiting'}));
+ S.subs.push(
+  demo({name:'Streaming service',amount:15.99,cycle:'monthly',renewal:daysAgo(-6),unused:false}),
+  demo({name:'Cloud storage',amount:2.99,cycle:'monthly',renewal:daysAgo(-12),unused:true}),
+  demo({name:'Journal app',amount:59,cycle:'yearly',renewal:daysAgo(-90),unused:false}));
+ S.reviews.push(demo({date:daysAgo(7),mood:4,win:'Paid rent on time',change:'Cancel the unused cloud plan'}));
+ S.brain.push(demo({text:'Call bank about the monthly fee'}));
+ save();render();toast('Demo loaded. Remove it anytime.');
+}
+function removeDemo(){
+ if(!hasDemo()){toast('No demo data to remove');return}
+ if(!confirm('Remove the demo entries? Your own entries stay.'))return;
+ DEMO_KEYS.forEach(k=>{S[k]=S[k].filter(x=>!x.demo)});
+ Object.values(S.billPaid).forEach(mo=>Object.keys(mo).forEach(id=>{if(id.startsWith('demo-'))delete mo[id]}));
+ save();render();toast('Demo data removed. Your own entries are safe.');
+}
+function demoBanner(){
+ const box='display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px';
+ if(hasDemo())return `<div class="card" style="${box};background:var(--accent2)"><div><b>You are viewing demo data.</b><div class="small">Explore freely. Remove it when you are ready to start with your own numbers.</div></div><button class="btn primary" onclick="removeDemo()">Remove demo data</button></div>`;
+ if(!S.income.length&&!S.expenses.length&&!S.bills.length)return `<div class="card" style="${box}"><div><b>New here?</b><div class="small muted">Load demo data to explore every tab. You can remove it anytime.</div></div><button class="btn primary" onclick="loadDemo()">Load demo data</button></div>`;
+ return '';
+}
+
+/* ============ DASHBOARD ============ */
+function renderDashboard(){
+ const m=curMonth();
+ const inc=monthIncome(), spent=monthSpent(), bills=sum(unpaidBills()), safe=safeToSpend();
+ const rate=inc?Math.round((inc-spent)/inc*100):0;
+ const monthPct=pct(dayOfMonth()/daysInMonth()*100);
+ const spendPct=pct(inc?spent/inc*100:0);
+ const upcoming=S.bills.map(b=>({...b,inDays:daysUntil(b.day)})).filter(b=>!paidMap()[b.id]).sort((a,b)=>a.inDays-b.inDays).slice(0,5);
+ const topEnv=S.envelopes.map(e=>({...e,spent:envSpent(e.name)})).sort((a,b)=>b.spent-a.spent)[0];
+ const nextAction=nextActionText();
+
+ $('#dashboard').innerHTML=`
+ ${demoBanner()}
+ <div class="grid metrics">
+   ${metricCard('Safe to spend',money(safe),safe<0?'Over the line. Pause spending.':'After bills and spending this month',safe<0?'bad':'ok', safe<0?'↘ Review now':'↗ Clear for now')}
+   ${metricCard('Spent this month',money(spent),`${spendPct}% of income`,spendPct>90?'bad':'ok', spendPct>90?'↗ Close to income':'↗ Healthy pace')}
+   ${metricCard('Bills still due',money(bills),`${unpaidBills().length} unpaid this month`,unpaidBills().length?'warn':'ok', unpaidBills().length?'● Upcoming':'✓ All paid')}
+   ${metricCard('Savings rate',inc?rate+'%':'—',inc?'Income minus spending':'Log income to see this',rate>=20?'ok':'warn', rate>=20?'↗ On target':'↗ Room to grow')}
+ </div>
+ <div class="grid dash">
+   <div class="hero-ask span2">
+     <div class="eyebrow">YOUR NEXT ACTION</div>
+     <h2>${esc(nextAction.title)}</h2>
+     <p>${esc(nextAction.body)}</p>
+     <div class="actions" style="margin-top:14px">${nextAction.btn}</div>
+   </div>
+   <div class="card">
+     <div class="card-head"><h3>Month progress</h3><span class="pill">Day ${dayOfMonth()} of ${daysInMonth()}</span></div>
+     <div class="row" style="justify-content:space-around;align-items:center;flex-wrap:wrap;gap:16px">
+       <div class="ring" style="background:conic-gradient(var(--accent) ${monthPct}%,var(--panel2) 0)"><b>${monthPct}%</b></div>
+       <div class="stack" style="flex:1;min-width:140px">
+         <div><div class="small muted">Income</div><b>${money(inc)}</b></div>
+         <div><div class="small muted">Spent</div><b>${money(spent)}</b></div>
+       </div>
+     </div>
+   </div>
+   <div class="card span2">
+     <div class="card-head"><h3>Envelopes this month</h3><button class="btn sm" onclick="go('budget')">Manage</button></div>
+     ${S.envelopes.slice(0,6).map(e=>{const s=envSpent(e.name);const p=pct(e.limit?s/e.limit*100:0);const cls=p>=100?'bad':p>=80?'warn':'';return `
+       <div style="margin-bottom:13px">
+         <div class="row small"><span><span class="dot" style="background:${e.color}"></span>${envName(e.name)}</span><span class="muted">${money(s)} / ${money(e.limit)}</span></div>
+         <div class="progress" style="margin-top:6px"><i class="${cls}" style="width:${p}%;background:${cls?'':e.color}"></i></div>
+       </div>`}).join('')||'<div class="empty">Add envelopes in Budget.</div>'}
+   </div>
+   <div class="card">
+     <div class="card-head"><h3>Where it goes</h3><span class="pill">${spent?money(spent):'No spending'}</span></div>
+     ${donutHTML()}
+   </div>
+   <div class="card span2">
+     <div class="card-head"><h3>Coming up</h3><button class="btn sm" onclick="go('bills')">All bills</button></div>
+     ${upcoming.length?`<div class="timeline">${upcoming.map(b=>`<div class="tl ${b.inDays<=2?'late':''}"><div class="row"><div><b>${esc(b.name)}</b><div class="small muted">${money(b.amount)} · ${envName(b.env)}</div></div><span class="pill ${b.inDays<=2?'warn':''}">${b.inDays===0?'Due today':'in '+b.inDays+'d'}</span></div></div>`).join('')}</div>`:'<div class="empty">Nothing due. Lovely.</div>'}
+   </div>
+   <div class="card">
+     <div class="card-head"><h3>6-month trend</h3><span class="pill">Spent</span></div>
+     ${trendHTML()}
+   </div>
+   <div class="card span2">
+     <div class="card-head"><h3>Brain dump</h3><span class="pill">Capture now, sort later</span></div>
+     <div class="row" style="gap:8px"><input class="field" id="brainIn" placeholder="e.g. Call bank about fee, cancel gym trial…" onkeydown="if(event.key==='Enter')addBrain()"><button class="btn primary" onclick="addBrain()">Add</button></div>
+     <div style="margin-top:12px">${S.brain.slice(0,6).map(b=>`<div class="list-item row"><span>${esc(b.text)}</span><button class="btn ghost sm" onclick="removeBrain('${b.id}')">✓ Done</button></div>`).join('')||'<div class="empty" style="padding:14px">Your mind is clear right now.</div>'}</div>
+   </div>
+   <div class="card">
+     <div class="card-head"><h3>Top spend</h3></div>
+     ${topEnv&&topEnv.spent>0?`<div class="stack"><div><b style="font-size:20px">${envName(topEnv.name)}</b><div class="muted small">${money(topEnv.spent)} this month</div></div><div class="small muted">Small shifts in your biggest envelope move the needle fastest.</div></div>`:'<div class="empty" style="padding:18px">Log a few expenses and we will show your biggest envelope here.</div>'}
+   </div>
+ </div>`;
+}
+function metricCard(label,val,sub,tone,trend){return `<div class="card"><div class="metric-label">${label}</div><div class="metric-value">${val}</div><div class="trend ${tone==='bad'?'bad':''}">${trend}</div><div class="muted small" style="margin-top:6px">${sub}</div></div>`}
+function nextActionText(){
+ if(!S.settings.name&&!S.income.length&&!S.expenses.length&&!S.bills.length){
+  return {title:'Start with your income',body:'Add your most recent paycheck. Everything else builds from there.',btn:'<button class="btn primary" onclick="openIncome()">＋ Add income</button>'};
+ }
+ const late=S.bills.map(b=>({...b,inDays:daysUntil(b.day)})).filter(b=>!paidMap()[b.id]&&b.inDays<=2);
+ if(late.length) return {title:`Pay ${late[0].name} soon`,body:`${money(late[0].amount)} is due ${late[0].inDays===0?'today':'in '+late[0].inDays+' days'}. Tick it off once it is paid.`,btn:'<button class="btn primary" onclick="go(\'bills\')">Open bills</button>'};
+ if(!S.expenses.length) return {title:'Log your first expense',body:'Log it the same day, even if it is tiny. Tiny entries count.',btn:'<button class="btn primary" onclick="openExpense()">＋ Log expense</button>'};
+ const over=S.envelopes.find(e=>envSpent(e.name)>e.limit);
+ if(over) return {title:`${over.name} is over budget`,body:`You are ${money(envSpent(over.name)-over.limit)} past this envelope. Decide whether to move money or pause.`,btn:'<button class="btn primary" onclick="go(\'budget\')">Review envelopes</button>'};
+ if(S.impulse.some(x=>x.decision==='waiting'&&(Date.now()-new Date(x.date).getTime())>=2*86400000))
+  return {title:'Impulse buys are ready to decide',body:'Your 48-hour pause is up. Are you still excited about them?',btn:'<button class="btn primary" onclick="go(\'impulse\')">Decide</button>'};
+ return {title:'You are on track',body:'Nothing urgent right now. Take a breath and enjoy it.',btn:'<button class="btn" onclick="go(\'reset\')">Do weekly reset</button>'};
+}
+function donutHTML(){
+ const m=curMonth();
+ const totals=S.envelopes.map(e=>({name:e.name,color:e.color,v:envSpent(e.name)})).filter(x=>x.v>0);
+ const total=sum(totals,x=>x.v);
+ if(!total) return '<div class="empty" style="padding:20px">Your spending breakdown appears here.</div>';
+ let acc=0;const stops=totals.map(x=>{const a=acc,b=acc+x.v/total*100;acc=b;return `${x.color} ${a}% ${b}%`}).join(',');
+ return `<div class="row" style="align-items:center;gap:20px;flex-wrap:wrap;justify-content:center">
+   <div class="donut" style="background:conic-gradient(${stops})"></div>
+   <div class="legend">${totals.map(x=>`<div class="row small"><span><span class="dot" style="background:${x.color}"></span>${envName(x.name)}</span><b>${Math.round(x.v/total*100)}%</b></div>`).join('')}</div>
+ </div>`;
+}
+function trendHTML(){
+ const months=monthsBack(6);
+ const vals=months.map(mo=>({mo,s:monthSpent(mo),i:monthIncome(mo)}));
+ const max=Math.max(1,...vals.map(v=>Math.max(v.s,v.i)));
+ return `<div class="bars">${vals.map(v=>`<div class="bar-col" title="${v.mo}: ${money(v.s)}">
+   <div class="bar" style="height:${Math.max(3,v.s/max*100)}%"></div><small>${v.mo.slice(5)}</small></div>`).join('')}</div>`;
+}
+function addBrain(){const el=$('#brainIn');const t=el.value.trim();if(!t)return;S.brain.unshift({id:uid(),text:t});el.value='';save();renderDashboard();toast('Captured. Sort it later.')}
+function removeBrain(id){S.brain=S.brain.filter(b=>b.id!==id);save();renderDashboard()}
+
+/* ============ BUDGET ============ */
+function renderBudget(){
+ const inc=monthIncome();
+ const planned=sum(S.envelopes,e=>e.limit);
+ const left=inc-planned;
+ $('#budget').innerHTML=`
+ <div class="toolbar"><div class="muted">Monthly limits per envelope. Give every dollar a job.</div>
+   <div class="actions"><button class="btn primary" onclick="openEnvelope()">＋ New envelope</button></div></div>
+ <div class="grid metrics" style="grid-template-columns:repeat(3,1fr)">
+   ${metricCard('Planned this month',money(planned),'Sum of all envelope limits','ok','◎ Plan')}
+   ${metricCard('Income',money(inc),'Logged this month','ok','↗ Logged')}
+   ${metricCard('Unassigned',money(left),left<0?'You planned more than you earn.':'Still free to assign',left<0?'bad':'ok',left<0?'↘ Over plan':'✓ Assigned')}
+ </div>
+ <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(270px,1fr))">
+ ${S.envelopes.map(e=>{const s=envSpent(e.name);const p=pct(e.limit?s/e.limit*100:0);const cls=p>=100?'bad':p>=80?'warn':'';const rem=e.limit-s;return `
+   <div class="card">
+     <div class="card-head"><span class="pill"><span class="dot" style="background:${e.color}"></span>${envName(e.name)}</span>
+       <div class="actions"><button class="btn ghost sm" onclick="openEnvelope('${e.id}')">Edit</button></div></div>
+     <div class="metric-value" style="font-size:26px">${money(rem)}</div>
+     <div class="muted small">${rem>=0?'left of':'over'} ${money(e.limit)} limit</div>
+     <div class="progress" style="margin-top:14px"><i class="${cls}" style="width:${p}%;background:${cls?'':e.color}"></i></div>
+     <div class="row small muted" style="margin-top:8px"><span>${money(s)} spent</span><span>${p}%</span></div>
+   </div>`}).join('')}
+ </div>`;
+}
+function openEnvelope(id){
+ const e=id?S.envelopes.find(x=>x.id===id):{name:'',limit:'',color:PALETTE[S.envelopes.length%PALETTE.length]};
+ openModal(`<button class="close" onclick="closeModal()">×</button><h2>${id?'Edit':'New'} envelope</h2>
+ <form onsubmit="saveEnvelope(event,'${id||''}')"><div class="form-grid">
+  <div class="full"><label class="lbl">Name</label><input class="field" name="name" required value="${esc(e.name)}" placeholder="e.g. Groceries"></div>
+  <div><label class="lbl">Monthly limit</label><input class="field" type="number" min="0" step="1" name="limit" required value="${e.limit}"></div>
+  <div><label class="lbl">Colour</label><select class="field" name="color">${PALETTE.map(c=>`<option value="${c}" ${c===e.color?'selected':''} style="background:${c};color:#fff">${c}</option>`).join('')}</select></div>
+ </div>
+ <div class="actions" style="margin-top:18px;justify-content:space-between">
+   ${id?`<button type="button" class="btn danger" onclick="deleteEnvelope('${id}')">Delete</button>`:'<span></span>'}
+   <button class="btn primary">Save envelope</button></div></form>`);
+}
+function saveEnvelope(ev,id){ev.preventDefault();const f=new FormData(ev.target);const name=f.get('name').trim();const limit=+f.get('limit');const color=f.get('color');
+ if(id){const e=S.envelopes.find(x=>x.id===id);const old=e.name;e.name=name;e.limit=limit;e.color=color;S.expenses.forEach(x=>{if(x.env===old)x.env=name});S.bills.forEach(b=>{if(b.env===old)b.env=name})}
+ else S.envelopes.push({id:uid(),name,limit,color});
+ save();closeModal();render();toast('Envelope saved')}
+function deleteEnvelope(id){const e=S.envelopes.find(x=>x.id===id);if(!confirm(`Delete "${e.name}"? Past expenses keep their label.`))return;S.envelopes=S.envelopes.filter(x=>x.id!==id);save();closeModal();render()}
+
+/* ============ TRANSACTIONS ============ */
+let txFilter={type:'all',q:''};
+function renderTransactions(){
+ const rows=[...S.income.map(x=>({...x,type:'income',label:x.name,env:x.kind})),...S.expenses.map(x=>({...x,type:'expense',label:x.name}))]
+  .filter(r=>txFilter.type==='all'||r.type===txFilter.type)
+  .filter(r=>!txFilter.q||(r.label+(r.env||'')).toLowerCase().includes(txFilter.q.toLowerCase()))
+  .sort((a,b)=>b.date.localeCompare(a.date));
+ $('#transactions').innerHTML=`
+ <div class="toolbar">
+   <div class="actions">
+     ${['all','income','expense'].map(t=>`<button class="btn ${txFilter.type===t?'primary':''}" onclick="txFilter.type='${t}';renderTransactions()">${t==='all'?'All':t[0].toUpperCase()+t.slice(1)+'s'}</button>`).join('')}
+     <input class="field" style="width:220px" placeholder="Search…" value="${esc(txFilter.q)}" oninput="txFilter.q=this.value;renderTransactions()">
+   </div>
+   <div class="actions"><button class="btn" onclick="openIncome()">＋ Income</button><button class="btn primary" onclick="openExpense()">＋ Expense</button></div>
+ </div>
+ <div class="card">
+  <table class="table"><thead><tr><th>Date</th><th>What</th><th>Envelope / type</th><th class="num">Amount</th><th></th></tr></thead>
+  <tbody>${rows.map(r=>`<tr>
+    <td>${fmtDate(r.date)}</td><td>${esc(r.label)}</td>
+    <td><span class="pill">${r.type==='income'?esc(r.env||'Income'):envName(r.env)}</span></td>
+    <td class="num" style="color:${r.type==='income'?'var(--accent)':'var(--danger)'};font-weight:700">${r.type==='income'?'+':'−'}${money(r.amount).replace('−','')}</td>
+    <td style="text-align:right"><button class="btn ghost sm" onclick="deleteTx('${r.type}','${r.id}')">Remove</button></td></tr>`).join('')||`<tr><td colspan="5"><div class="empty">Nothing matches. Log an income or expense to begin.</div></td></tr>`}</tbody></table>
+ </div>`;
+}
+function openIncome(){openModal(`<button class="close" onclick="closeModal()">×</button><h2>Add income</h2>
+ <form onsubmit="saveIncome(event)"><div class="form-grid">
+  <div class="full"><label class="lbl">Source</label><input class="field" name="name" required placeholder="e.g. Salary, Client invoice"></div>
+  <div><label class="lbl">Amount</label><input class="field" type="number" step="0.01" name="amount" required></div>
+  <div><label class="lbl">Date</label><input class="field" type="date" name="date" value="${todayISO()}"></div>
+  <div class="full"><label class="lbl">Type</label><select class="field" name="kind"><option value="Regular">Regular paycheck</option><option value="Irregular">Irregular / freelance</option></select></div>
+ </div><div class="actions" style="margin-top:18px;justify-content:flex-end"><button class="btn primary">Save income</button></div></form>`)}
+function saveIncome(ev){ev.preventDefault();const f=new FormData(ev.target);S.income.push({id:uid(),name:f.get('name'),amount:+f.get('amount'),date:f.get('date'),kind:f.get('kind')});save();closeModal();render();toast('Income logged')}
+function openExpense(){openModal(`<button class="close" onclick="closeModal()">×</button><h2>Log expense</h2>
+ <form onsubmit="saveExpense(event)"><div class="form-grid">
+  <div class="full"><label class="lbl">What was it?</label><input class="field" name="name" required placeholder="e.g. Groceries"></div>
+  <div><label class="lbl">Amount</label><input class="field" type="number" step="0.01" name="amount" required></div>
+  <div><label class="lbl">Date</label><input class="field" type="date" name="date" value="${todayISO()}"></div>
+  <div class="full"><label class="lbl">Envelope</label><select class="field" name="env">${S.envelopes.map(e=>`<option value="${esc(e.name)}">${envName(e.name)}</option>`).join('')}</select></div>
+ </div><div class="actions" style="margin-top:18px;justify-content:flex-end"><button class="btn primary">Save expense</button></div></form>`)}
+function saveExpense(ev){ev.preventDefault();const f=new FormData(ev.target);S.expenses.push({id:uid(),name:f.get('name'),amount:+f.get('amount'),date:f.get('date'),env:f.get('env')});save();closeModal();render();toast('Expense logged');
+ const e=S.envelopes.find(x=>x.name===f.get('env'));if(e&&envSpent(e.name)>e.limit)setTimeout(()=>toast(`Heads up: ${e.name} is over its limit.`),2300)}
+function deleteTx(type,id){const list=type==='income'?'income':'expenses';S[list]=S[list].filter(x=>x.id!==id);save();render()}
+
+/* ============ BILLS ============ */
+function renderBills(){
+ const p=paidMap();
+ const list=[...S.bills].map(b=>({...b,inDays:daysUntil(b.day)})).sort((a,b)=>a.inDays-b.inDays);
+ const total=sum(S.bills), paidTotal=sum(S.bills.filter(b=>p[b.id])), due=total-paidTotal;
+ $('#bills').innerHTML=`
+ <div class="grid metrics" style="grid-template-columns:repeat(3,1fr)">
+   ${metricCard('Monthly bills',money(total),`${S.bills.length} recurring`,'ok','▦ Recurring')}
+   ${metricCard('Paid this month',money(paidTotal),`${Object.values(p).filter(Boolean).length} of ${S.bills.length}`,'ok','✓ Progress')}
+   ${metricCard('Still to pay',money(due),'Tick each one as you pay it',due>0?'warn':'ok',due>0?'● Open':'✓ Done')}
+ </div>
+ <div class="toolbar"><div class="muted small">Ticks reset each month. Due days repeat automatically.</div><button class="btn primary" onclick="openBill()">＋ New bill</button></div>
+ <div class="card"><table class="table"><thead><tr><th>Paid</th><th>Bill</th><th>Due</th><th>Envelope</th><th class="num">Amount</th><th></th></tr></thead>
+ <tbody>${list.map(b=>`<tr style="${p[b.id]?'opacity:.5':''}">
+   <td><input type="checkbox" class="check" ${p[b.id]?'checked':''} onchange="togglePaid('${b.id}')"></td>
+   <td><b>${esc(b.name)}</b>${b.autopay?' <span class="pill">autopay</span>':''}</td>
+   <td>${b.day}${p[b.id]?'':` <span class="pill ${b.inDays<=2?'warn':''}">${b.inDays===0?'today':'in '+b.inDays+'d'}</span>`}</td>
+   <td><span class="pill">${envName(b.env)}</span></td>
+   <td class="num">${money(b.amount)}</td>
+   <td style="text-align:right"><button class="btn ghost sm" onclick="openBill('${b.id}')">Edit</button></td></tr>`).join('')||`<tr><td colspan="6"><div class="empty">No bills yet. Add rent, phone, insurance.</div></td></tr>`}
+ </tbody></table></div>`;
+}
+function togglePaid(id){const m=curMonth();S.billPaid[m]=S.billPaid[m]||{};S.billPaid[m][id]=!S.billPaid[m][id];save();render()}
+function openBill(id){const b=id?S.bills.find(x=>x.id===id):{name:'',day:1,amount:'',env:S.envelopes[0]?.name,autopay:false};
+ openModal(`<button class="close" onclick="closeModal()">×</button><h2>${id?'Edit':'New'} bill</h2>
+ <form onsubmit="saveBill(event,'${id||''}')"><div class="form-grid">
+  <div class="full"><label class="lbl">Bill name</label><input class="field" name="name" required value="${esc(b.name)}" placeholder="e.g. Rent"></div>
+  <div><label class="lbl">Due day of month (1–31)</label><input class="field" type="number" min="1" max="31" name="day" required value="${b.day}"></div>
+  <div><label class="lbl">Amount</label><input class="field" type="number" step="0.01" name="amount" required value="${b.amount}"></div>
+  <div class="full"><label class="lbl">Envelope</label><select class="field" name="env">${S.envelopes.map(e=>`<option value="${esc(e.name)}" ${e.name===b.env?'selected':''}>${envName(e.name)}</option>`).join('')}</select></div>
+  <div class="full"><label class="row small"><span>Paid automatically (autopay)</span><input type="checkbox" class="check" name="autopay" ${b.autopay?'checked':''}></label></div>
+ </div><div class="actions" style="margin-top:18px;justify-content:space-between">
+   ${id?`<button type="button" class="btn danger" onclick="deleteBill('${id}')">Delete</button>`:'<span></span>'}
+   <button class="btn primary">Save bill</button></div></form>`)}
+function saveBill(ev,id){ev.preventDefault();const f=new FormData(ev.target);const obj={name:f.get('name'),day:Math.min(31,Math.max(1,+f.get('day'))),amount:+f.get('amount'),env:f.get('env'),autopay:!!f.get('autopay')};
+ if(id)Object.assign(S.bills.find(x=>x.id===id),obj);else S.bills.push({id:uid(),...obj});
+ save();closeModal();render();toast('Bill saved')}
+function deleteBill(id){S.bills=S.bills.filter(b=>b.id!==id);save();closeModal();render()}
+
+/* ============ DEBT & SAVINGS ============ */
+function renderDebt(){
+ const debts=[...S.debts].sort((a,b)=>a.balance-b.balance);
+ const totalDebt=sum(S.debts,d=>d.balance);
+ const monthlyMin=sum(S.debts,d=>d.min);
+ const minSpare=Math.max(0,S.settings.spare||0);
+ $('#debt').innerHTML=`
+ <div class="grid two">
+  <div class="card">
+    <div class="card-head"><h3>Debt snowball</h3><div class="actions"><button class="btn primary sm" onclick="openDebt()">＋ Add debt</button></div></div>
+    <div class="small muted" style="margin-bottom:12px">Pay minimums on everything. Put extra money on the smallest balance first. Quick wins keep you going.</div>
+    ${debts.map((d,i)=>{const months=d.min>0?Math.ceil(d.balance/d.min):'—';return `
+      <div class="list-item">
+        <div class="row"><div><b>${i===0?'⭐ Focus: ':''}${esc(d.name)}</b><div class="small muted">Minimum ${money(d.min)}/month · ~${months} months at minimum</div></div>
+        <div style="text-align:right"><b>${money(d.balance)}</b><div><button class="btn ghost sm" onclick="payDebt('${d.id}')">Log payment</button></div></div></div>
+      </div>`}).join('')||'<div class="empty">No debts listed. If you have some, list them so the snowball can help.</div>'}
+    <div class="kv" style="margin-top:10px"><span>Total owed</span><b>${money(totalDebt)}</b></div>
+    <div class="kv"><span>Total minimums</span><b>${money(monthlyMin)}</b></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><h3>Savings goals</h3><button class="btn primary sm" onclick="openGoal()">＋ Add goal</button></div>
+    ${S.goals.map(g=>{const p=pct(g.saved/g.target*100);const left=Math.max(0,g.target-g.saved);return `
+      <div class="list-item">
+        <div class="row"><b>${esc(g.name)}</b><span class="pill ${p>=100?'ok':''}">${p}%</span></div>
+        <div class="progress" style="margin:10px 0"><i style="width:${p}%"></i></div>
+        <div class="row small muted"><span>${money(g.saved)} of ${money(g.target)}</span><span>${money(left)} to go</span></div>
+        <div class="actions" style="margin-top:8px"><button class="btn sm" onclick="addToGoal('${g.id}')">＋ Add money</button><button class="btn ghost sm" onclick="openGoal('${g.id}')">Edit</button></div>
+      </div>`}).join('')||'<div class="empty">Set a goal. Even a small one builds momentum.</div>'}
+  </div>
+ </div>`;
+}
+function openDebt(id){const d=id?S.debts.find(x=>x.id===id):{name:'',balance:'',min:''};
+ openModal(`<button class="close" onclick="closeModal()">×</button><h2>${id?'Edit':'Add'} debt</h2>
+ <form onsubmit="saveDebt(event,'${id||''}')"><div class="form-grid">
+  <div class="full"><label class="lbl">Name</label><input class="field" name="name" required value="${esc(d.name)}" placeholder="e.g. Credit card"></div>
+  <div><label class="lbl">Current balance</label><input class="field" type="number" step="0.01" name="balance" required value="${d.balance}"></div>
+  <div><label class="lbl">Minimum payment</label><input class="field" type="number" step="0.01" name="min" required value="${d.min}"></div>
+ </div><div class="actions" style="margin-top:18px;justify-content:flex-end"><button class="btn primary">Save debt</button></div></form>`)}
+function saveDebt(ev,id){ev.preventDefault();const f=new FormData(ev.target);const obj={name:f.get('name'),balance:+f.get('balance'),min:+f.get('min')};if(id)Object.assign(S.debts.find(x=>x.id===id),obj);else S.debts.push({id:uid(),...obj});save();closeModal();render();toast('Debt saved')}
+function payDebt(id){const d=S.debts.find(x=>x.id===id);const v=parseFloat(prompt(`How much did you pay toward ${d.name}?`,d.min));if(v>0){d.balance=Math.max(0,d.balance-v);save();render();toast(d.balance===0?'Debt cleared! 🎉':'Payment logged')}}
+function openGoal(id){const g=id?S.goals.find(x=>x.id===id):{name:'',target:'',saved:0};
+ openModal(`<button class="close" onclick="closeModal()">×</button><h2>${id?'Edit':'New'} savings goal</h2>
+ <form onsubmit="saveGoal(event,'${id||''}')"><div class="form-grid">
+  <div class="full"><label class="lbl">Goal</label><input class="field" name="name" required value="${esc(g.name)}" placeholder="e.g. Emergency fund"></div>
+  <div><label class="lbl">Target</label><input class="field" type="number" step="1" name="target" required value="${g.target}"></div>
+  <div><label class="lbl">Saved so far</label><input class="field" type="number" step="1" name="saved" value="${g.saved}"></div>
+ </div><div class="actions" style="margin-top:18px;justify-content:space-between">${id?`<button type="button" class="btn danger" onclick="deleteGoal('${id}')">Delete</button>`:'<span></span>'}<button class="btn primary">Save goal</button></div></form>`)}
+function saveGoal(ev,id){ev.preventDefault();const f=new FormData(ev.target);const obj={name:f.get('name'),target:+f.get('target'),saved:+f.get('saved')||0};if(id)Object.assign(S.goals.find(x=>x.id===id),obj);else S.goals.push({id:uid(),...obj});save();closeModal();render();toast('Goal saved')}
+function deleteGoal(id){S.goals=S.goals.filter(g=>g.id!==id);save();closeModal();render()}
+function addToGoal(id){const g=S.goals.find(x=>x.id===id);const v=parseFloat(prompt(`Add how much to "${g.name}"?`,'50'));if(v>0){g.saved+=v;save();render();if(g.saved>=g.target)toast('Goal reached! 🎉')}}
+
+/* ============ IMPULSE PAUSE ============ */
+function renderImpulse(){
+ const items=[...S.impulse].sort((a,b)=>b.date.localeCompare(a.date));
+ const waiting=items.filter(x=>x.decision==='waiting');
+ const skipped=items.filter(x=>x.decision==='skipped');
+ const saved=sum(skipped);
+ $('#impulse').innerHTML=`
+ <div class="grid metrics" style="grid-template-columns:repeat(3,1fr)">
+   ${metricCard('Waiting',waiting.length,'Parked for 48 hours','ok','⏳ Pausing')}
+   ${metricCard('Skipped',skipped.length,'Choices you did not buy','ok','✓ Strong')}
+   ${metricCard('Money kept',money(saved),'From skipped impulse buys','ok','↗ Saved')}
+ </div>
+ <div class="toolbar"><div class="muted small">Wanted something? Park it. Most urges fade in 48 hours.</div><button class="btn primary" onclick="openImpulse()">＋ Park an item</button></div>
+ <div class="grid two">
+ ${items.map(x=>{const ready=new Date(new Date(x.date+'T00:00').getTime()+2*86400000);const isReady=Date.now()>=ready.getTime();const hrs=Math.max(0,Math.ceil((ready-Date.now())/3600000));return `
+   <div class="card">
+     <div class="card-head"><b style="font-size:17px">${esc(x.name)}</b><span class="pill ${x.decision==='skipped'?'ok':x.decision==='bought'?'bad':'warn'}">${x.decision==='waiting'?(isReady?'Ready to decide':'Wait '+hrs+'h'):x.decision==='skipped'?'Skipped':'Bought'}</span></div>
+     <div class="metric-value" style="font-size:24px">${money(x.amount)}</div>
+     <div class="small muted">${esc(x.why||'No reason given')} · parked ${fmtDate(x.date)}</div>
+     ${x.decision==='waiting'?`<div class="actions" style="margin-top:14px"><button class="btn primary sm" onclick="decideImpulse('${x.id}','skipped')">I skipped it ✓</button><button class="btn sm" onclick="decideImpulse('${x.id}','bought')">I bought it</button><button class="btn ghost sm" onclick="removeImpulse('${x.id}')">Remove</button></div>`:''}
+   </div>`}).join('')||'<div class="empty card">Nothing parked. When a want shows up, pause it here.</div>'}
+ </div>`;
+}
+function openImpulse(){openModal(`<button class="close" onclick="closeModal()">×</button><h2>Park an item</h2>
+ <form onsubmit="saveImpulse(event)"><div class="form-grid">
+  <div class="full"><label class="lbl">Item</label><input class="field" name="name" required placeholder="e.g. Noise-cancelling headphones"></div>
+  <div><label class="lbl">Price</label><input class="field" type="number" step="0.01" name="amount" required></div>
+  <div><label class="lbl">Date</label><input class="field" type="date" name="date" value="${todayISO()}"></div>
+  <div class="full"><label class="lbl">Why do I want it?</label><input class="field" name="why" placeholder="optional, be honest"></div>
+ </div><div class="actions" style="margin-top:18px;justify-content:flex-end"><button class="btn primary">Park it for 48h</button></div></form>`)}
+function saveImpulse(ev){ev.preventDefault();const f=new FormData(ev.target);S.impulse.push({id:uid(),name:f.get('name'),amount:+f.get('amount'),date:f.get('date'),why:f.get('why'),decision:'waiting'});save();closeModal();render();toast('Parked. Come back in 48 hours.')}
+function decideImpulse(id,d){const x=S.impulse.find(i=>i.id===id);x.decision=d;save();render();toast(d==='skipped'?'Nice. Money kept. 🌿':'Noted. Enjoy it.')}
+function removeImpulse(id){S.impulse=S.impulse.filter(i=>i.id!==id);save();render()}
+
+/* ============ SUBSCRIPTIONS ============ */
+function renderSubs(){
+ const monthly=sum(S.subs,s=>s.cycle==='yearly'?s.amount/12:s.amount);
+ const yearly=monthly*12;
+ $('#subs').innerHTML=`
+ <div class="grid metrics" style="grid-template-columns:repeat(3,1fr)">
+   ${metricCard('Monthly subscriptions',money(monthly),`${S.subs.length} active`,'ok','↻ Recurring')}
+   ${metricCard('Per year',money(yearly),'Quietly adds up','warn','⚠ Check')}
+   ${metricCard('Unused this month',money(sum(S.subs.filter(s=>s.unused),s=>s.cycle==='yearly'?s.amount/12:s.amount)),'Marked as not used','bad','↘ Consider cancel')}
+ </div>
+ <div class="toolbar"><div class="muted small">Review once a month. Ask: did I use this last month?</div><button class="btn primary" onclick="openSub()">＋ Add subscription</button></div>
+ <div class="card"><table class="table"><thead><tr><th>Service</th><th>Cycle</th><th>Next renewal</th><th class="num">Price</th><th>Used?</th><th></th></tr></thead>
+ <tbody>${S.subs.map(s=>`<tr>
+   <td><b>${esc(s.name)}</b></td><td><span class="pill">${s.cycle}</span></td>
+   <td>${s.renewal?fmtDate(s.renewal):'—'}</td><td class="num">${money(s.amount)}</td>
+   <td><label class="small"><input type="checkbox" class="check" ${s.unused?'':'checked'} onchange="toggleUsed('${s.id}')"> ${s.unused?'No':'Yes'}</label></td>
+   <td style="text-align:right"><button class="btn ghost sm" onclick="openSub('${s.id}')">Edit</button></td></tr>`).join('')||`<tr><td colspan="6"><div class="empty">No subscriptions yet. Add streaming, apps, memberships.</div></td></tr>`}</tbody></table></div>`;
+}
+function toggleUsed(id){const s=S.subs.find(x=>x.id===id);s.unused=!s.unused;save();render()}
+function openSub(id){const s=id?S.subs.find(x=>x.id===id):{name:'',amount:'',cycle:'monthly',renewal:todayISO()};
+ openModal(`<button class="close" onclick="closeModal()">×</button><h2>${id?'Edit':'Add'} subscription</h2>
+ <form onsubmit="saveSub(event,'${id||''}')"><div class="form-grid">
+  <div class="full"><label class="lbl">Service</label><input class="field" name="name" required value="${esc(s.name)}"></div>
+  <div><label class="lbl">Price</label><input class="field" type="number" step="0.01" name="amount" required value="${s.amount}"></div>
+  <div><label class="lbl">Cycle</label><select class="field" name="cycle"><option ${s.cycle==='monthly'?'selected':''}>monthly</option><option ${s.cycle==='yearly'?'selected':''}>yearly</option></select></div>
+  <div class="full"><label class="lbl">Next renewal</label><input class="field" type="date" name="renewal" value="${s.renewal||''}"></div>
+ </div><div class="actions" style="margin-top:18px;justify-content:space-between">${id?`<button type="button" class="btn danger" onclick="deleteSub('${id}')">Delete</button>`:'<span></span>'}<button class="btn primary">Save</button></div></form>`)}
+function saveSub(ev,id){ev.preventDefault();const f=new FormData(ev.target);const obj={name:f.get('name'),amount:+f.get('amount'),cycle:f.get('cycle'),renewal:f.get('renewal')};if(id)Object.assign(S.subs.find(x=>x.id===id),obj);else S.subs.push({id:uid(),unused:false,...obj});save();closeModal();render();toast('Subscription saved')}
+function deleteSub(id){S.subs=S.subs.filter(s=>s.id!==id);save();closeModal();render()}
+
+/* ============ WEEKLY RESET ============ */
+const RESET_STEPS=['Log income received this week','Log expenses I haven’t entered yet','Check bills for the next 7 days','Move money toward a goal or debt','Review one subscription or unused item','Plan one purchase or skip one'];
+function renderReset(){
+ const done=S.weekly.done||{};
+ const count=Object.values(done).filter(Boolean).length;
+ const p=pct(count/RESET_STEPS.length*100);
+ $('#reset').innerHTML=`
+ <div class="grid two">
+  <div class="card">
+    <div class="card-head"><h3>This week’s reset</h3><span class="pill">${count}/${RESET_STEPS.length}</span></div>
+    <div class="progress" style="margin-bottom:14px"><i style="width:${p}%"></i></div>
+    ${RESET_STEPS.map((t,i)=>`<label class="row list-item" style="cursor:pointer"><span>${t}</span><input class="check" type="checkbox" ${done[i]?'checked':''} onchange="toggleStep(${i})"></label>`).join('')}
+  </div>
+  <div class="card">
+    <div class="card-head"><h3>Quick check-in</h3></div>
+    <label class="lbl">How did money feel this week? (1 = overwhelmed, 5 = calm)</label>
+    <input type="range" min="1" max="5" value="3" id="mood" style="width:100%;accent-color:var(--accent)">
+    <label class="lbl" style="margin-top:14px">One win</label><input class="field" id="win" placeholder="Something small counts">
+    <label class="lbl" style="margin-top:12px">One thing to change next week</label><input class="field" id="change" placeholder="Keep it to one">
+    <div class="actions" style="margin-top:16px"><button class="btn primary" onclick="saveReview()">Save check-in</button></div>
+  </div>
+ </div>
+ <div class="card" style="margin-top:18px"><div class="card-head"><h3>History</h3></div>
+  ${S.reviews.slice().reverse().map(r=>`<div class="list-item"><div class="row"><b>${fmtDate(r.date)}</b><span class="pill">Mood ${r.mood}/5</span></div><div class="small muted">Win: ${esc(r.win||'—')} · Change: ${esc(r.change||'—')}</div></div>`).join('')||'<div class="empty">Your check-ins appear here.</div>'}
+ </div>`;
+}
+function toggleStep(i){S.weekly.done[i]=!S.weekly.done[i];save();renderReset()}
+function saveReview(){S.reviews.push({date:todayISO(),mood:+$('#mood').value,win:$('#win').value,change:$('#change').value});S.weekly.done={};save();render();toast('Check-in saved. Well done.')}
+
+/* ============ REPORTS ============ */
+function renderReports(){
+ const months=monthsBack(6);
+ const rows=months.map(m=>({m,inc:monthIncome(m),spent:monthSpent(m)}));
+ const maxV=Math.max(1,...rows.map(r=>Math.max(r.inc,r.spent)));
+ // SVG line of net
+ const W=560,H=180,pad=24;
+ const nets=rows.map(r=>r.inc-r.spent);
+ const minN=Math.min(0,...nets),maxN=Math.max(1,...nets);
+ const pts=nets.map((n,i)=>{const x=pad+i*((W-pad*2)/Math.max(1,nets.length-1));const y=H-pad-((n-minN)/(maxN-minN||1))*(H-pad*2);return [x,y]});
+ const line=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+ const area=line+` L ${pts.at(-1)?.[0]||W-pad} ${H-pad} L ${pad} ${H-pad} Z`;
+ const cats=S.envelopes.map(e=>({name:e.name,v:envSpent(e.name),c:e.color})).sort((a,b)=>b.v-a.v);
+ const totalCats=sum(cats,c=>c.v)||1;
+ $('#reports').innerHTML=`
+ <div class="toolbar"><div class="muted small">Six months at a glance.</div>
+   <div class="actions"><button class="btn" onclick="exportCSV()">⇩ CSV export</button><button class="btn" onclick="window.print()">⎙ Print</button></div></div>
+ <div class="grid two">
+  <div class="card">
+    <div class="card-head"><h3>Net flow</h3><span class="pill">Income − spent</span></div>
+    <svg viewBox="0 0 ${W} ${H}" width="100%" style="overflow:visible">
+      <defs><linearGradient id="g" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="var(--accent)" stop-opacity=".35"/><stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>
+      <path d="${area}" fill="url(#g)"/>
+      <path d="${line}" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      ${pts.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="var(--panel)" stroke="var(--accent)" stroke-width="2"/><text x="${p[0]}" y="${H-4}" text-anchor="middle" font-size="11" fill="var(--muted)">${rows[i].m.slice(5)}</text>`).join('')}
+    </svg>
+  </div>
+  <div class="card">
+    <div class="card-head"><h3>Envelope share (this month)</h3></div>
+    ${cats.map(c=>`<div style="margin-bottom:11px"><div class="row small"><span><span class="dot" style="background:${c.c}"></span>${envName(c.name)}</span><span class="muted">${money(c.v)} · ${Math.round(c.v/totalCats*100)}%</span></div><div class="progress" style="margin-top:6px"><i style="width:${pct(c.v/totalCats*100)}%;background:${c.c}"></i></div></div>`).join('')}
+  </div>
+ </div>
+ <div class="card" style="margin-top:18px"><div class="card-head"><h3>Monthly table</h3></div>
+  <table class="table"><thead><tr><th>Month</th><th class="num">Income</th><th class="num">Spent</th><th class="num">Net</th><th class="num">Savings rate</th></tr></thead>
+  <tbody>${rows.map(r=>`<tr><td>${r.m}</td><td class="num">${money(r.inc)}</td><td class="num">${money(r.spent)}</td><td class="num" style="color:${r.inc-r.spent>=0?'var(--accent)':'var(--danger)'}">${money(r.inc-r.spent)}</td><td class="num">${r.inc?Math.round((r.inc-r.spent)/r.inc*100)+'%':'—'}</td></tr>`).join('')}</tbody></table>
+ </div>`;
+}
+function exportCSV(){
+ const rows=[['Date','Type','Name','Envelope/Kind','Amount'],...S.income.map(x=>[x.date,'Income',x.name,x.kind,x.amount]),...S.expenses.map(x=>[x.date,'Expense',x.name,x.env,x.amount])];
+ const csv=rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n');
+ download('adhd-budget-export.csv',csv,'text/csv');toast('CSV downloaded');
+}
+
+/* ============ SETTINGS ============ */
+function renderSettings(){
+ $('#settings').innerHTML=`
+ <div class="toolbar"><div class="muted small">Your data stays in this browser. Back up regularly.</div><button class="btn primary" onclick="saveSettings()">Save changes</button></div>
+ <div class="grid two">
+  <div class="card">
+    <div class="card-head"><h3>Personal</h3></div>
+    <div class="stack">
+      <div><label class="lbl">Your first name</label><input class="field" id="setName" value="${esc(S.settings.name)}"></div>
+      <div><label class="lbl">Currency symbol</label><input class="field" id="setCur" maxlength="4" value="${esc(S.settings.currency)}"></div>
+      <div><label class="lbl">Theme</label><div class="theme-grid">${themeOpts()}</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head"><h3>Your data</h3></div>
+    <div class="stack">
+      <button class="btn" onclick="backup()">⇩ Download backup (JSON)</button>
+      <label class="btn" style="justify-content:center;cursor:pointer">⇧ Restore backup<input type="file" accept="application/json" hidden onchange="restore(event)"></label>
+      ${hasDemo()?'<button class="btn" onclick="removeDemo()">✕ Remove demo data</button>':'<button class="btn" onclick="loadDemo()">▶ Load demo data</button>'}
+      <button class="btn" onclick="exportCSV()">▦ Export CSV</button>
+      <button class="btn danger" onclick="resetAll()">Clear all data</button>
+    </div>
+    <div class="kv" style="margin-top:14px"><span>Storage</span><b>This browser</b></div>
+    <div class="kv"><span>Works offline</span><b>Yes</b></div>
+  </div>
+ </div>`;
+}
+function saveSettings(){S.settings.name=$('#setName').value.trim();S.settings.currency=$('#setCur').value||'$';save();render();toast('Settings saved')}
+function backup(){download('adhd-budget-backup-'+todayISO()+'.json',JSON.stringify(S,null,2),'application/json');toast('Backup downloaded')}
+function restore(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{S=Object.assign(blank(),JSON.parse(r.result));save();render();toast('Backup restored')}catch{toast('That file is not a valid backup')}};r.readAsText(f)}
+function resetAll(){if(confirm('Delete ALL planner data? Download a backup first.')){S=blank();save();render();toast('Cleared')}}
+
+/* ============ QUICK ADD + MODAL ============ */
+function openQuick(){openModal(`<button class="close" onclick="closeModal()">×</button><h2>Quick add</h2>
+ <div class="grid" style="grid-template-columns:1fr 1fr;gap:10px">
+  <button class="btn" onclick="closeModal();openExpense()">− Expense</button>
+  <button class="btn" onclick="closeModal();openIncome()">＋ Income</button>
+  <button class="btn" onclick="closeModal();openBill()">▦ Bill</button>
+  <button class="btn" onclick="closeModal();openImpulse()">✋ Impulse pause</button>
+  <button class="btn" onclick="closeModal();openSub()">↻ Subscription</button>
+  <button class="btn" onclick="closeModal();go('dashboard');setTimeout(()=>$('#brainIn')?.focus(),80)">🧠 Brain dump</button>
+ </div>`)}
+function openModal(html){$('#modalBox').innerHTML=html;$('#modal').classList.add('show')}
+function closeModal(){$('#modal').classList.remove('show')}
+$('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+function cycleTheme(){const order=['light','dark','lavender','galapagos','riviera'];S.settings.theme=order[(order.indexOf(S.settings.theme)+1)%order.length];save();render();toast('Theme: '+themeLabel())}
+function download(name,data,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+
+/* ============ boot ============ */
+render();
+</script>
+</body>
+</html>
